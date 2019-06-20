@@ -137,13 +137,17 @@ class Account{
     }
 
     editAuction = async (auction) => {
-        if(auction['company'])
-            await APISingleton.editAuctionByAddress(auction, auction['company'].address);
-        await APISingleton.editAuctionByAddress(auction, auction['client'].address);
-        await APISingleton.editAuctionByAddress(auction, auction['validator'].address);
-        await APISingleton.editAuctionbyAll(auction);
-        await this.update();
-        this.editing = false;
+        try{
+            if(auction['company'])
+                await APISingleton.editAuctionByAddress(auction, auction['company'].address);
+            await APISingleton.editAuctionByAddress(auction, auction['client'].address);
+            await APISingleton.editAuctionByAddress(auction, auction['validator'].address);
+            await APISingleton.editAuctionbyAll(auction);
+            await this.update();
+            this.editing = false;
+        }catch(err){
+            console.log(err)
+        }
     }
 
     saveAuction = async (auction) => {
@@ -163,11 +167,26 @@ class Account{
         return true;
     }
 
+    closeAuction = async ({auction, bid_accepted}) => {
+        for(var i = 0; i < auction['bids'].length; i++){
+            if(bid_accepted._id == auction['bids'][i]._id){
+                auction['bids'][i] = {...auction['bids'][i], state : 'Accepted'};  
+            }else{
+                auction['bids'][i] = {...auction['bids'][i], state : 'Rejected'};
+            }
+        }
+        await this.editAuction(auction);
+    }
+
     editBidByAuctionByAddress = async (bid, auction_address) => {
-        let auction = await APISingleton.editBidByAuctionByAddress(bid, auction_address);
-        this.editAuction(auction);
-        await this.update();
-        return true;
+        try{
+            let auction = await APISingleton.editBidByAuctionByAddress(bid, auction_address);
+            this.editAuction(auction);
+            await this.update();
+            return true;
+        }catch(err){
+            console.log(err);
+        }
     }
 
     logout = async () => {

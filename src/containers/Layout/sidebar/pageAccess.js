@@ -11,7 +11,7 @@ const pageAccess = {
     'validator' : {
         home : true,
         createAuction : false,
-        editAuction : true,
+        editAuction : false,
         auctions : true,
         bids : false,
         allAuctions : false,
@@ -24,7 +24,7 @@ const pageAccess = {
         auctions : false,
         bids : true,
         allAuctions : true,
-        createBid : true
+        createBid : false
     },
 }
 

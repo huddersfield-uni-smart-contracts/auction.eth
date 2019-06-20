@@ -95,6 +95,7 @@ class MainRoute extends React.Component {
                 <div className="container__wrap">
                     <Route exact path={'/client'} component={EntryPage}/>
                     <Route path={'/client/createAuction'} component={CreateAuction}/>	
+                    <Route path={'/client/editAuction'} component={EditAuction}/>	
                     <Route path={'/client/auctions'} component={Auctions}/>	
                     <Route path={'/client/bids'} component={Bids}/>	
                 </div>

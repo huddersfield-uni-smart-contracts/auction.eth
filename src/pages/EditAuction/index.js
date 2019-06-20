@@ -14,7 +14,7 @@ import _ from 'lodash';
 import { auctionStatusArray } from '../Auctions/containers/codes';
 import StringWorkerSingleton from '../../services/string';
 import { MenuItem } from '@material-ui/core';
-
+import AuctionBidsTable from './containers/Table';
 const logo = `${process.env.PUBLIC_URL}/img/logo.png`;
 
 
@@ -24,10 +24,12 @@ const defaultProps = {
     clients : [],
     validator_fee : 0,
     fee_percentage : 0.01,
-    state : 'Waiting for approval',
     total_paid : 0,
     company : {},
-    auction_address : '0x'
+    canEdit : false,
+    bids : [],
+    auction_address : '0x',
+    bid : false
 }
 
 
@@ -52,11 +54,24 @@ function NumberFormatCustom(props) {
     );
 }
 
-let editables = ['state']
+let editables = {
+    'validator' : ['state'],
+    'client' : []
+}
 
-function isEditable(type){
-    let index = editables.indexOf(new String(type).toLowerCase());
+function isEditable(typeOfUser,type){
+    let index = editables[typeOfUser].indexOf(new String(type).toLowerCase());
     return index > -1 ? true : false;
+}
+
+let params = {
+    'validator' : ['state'],
+    'client' : ['company', 'bid']
+}
+
+
+function checkParams(type, state){
+    return params[type].reduce( (acc, item) =>(acc && state[item]), true)
 }
 
 class EditAuction extends React.Component{
@@ -77,9 +92,12 @@ class EditAuction extends React.Component{
     projectData = (props) => {
         let { profile } = props;
         let editableAuction = profile.getEditableAuction();
+        console.log(editableAuction);
         this.setState({...this.state, 
             ...editableAuction,
             isEdit : true,
+            type : new String(props.profile.getType()).toLowerCase(),
+            bids : profile.getBidsByAuction(editableAuction.auction_address),
             validators : APISingleton.getAllByType('validator'),
             companies : APISingleton.getAllByType('company'),
             clients   : APISingleton.getAllByType('client')
@@ -89,19 +107,33 @@ class EditAuction extends React.Component{
     edit = async () => {
         const { profile } = this.props;
         let auction = APISingleton.getAuctionByAuctionAddress(this.state.auction_adress);
-        await profile.editAuction({...auction, ...this.state});
+        if(this.state.type == 'client'){
+            await profile.closeAuction({
+                auction : { ...auction, ...this.state},
+                bid_accepted : this.state.bid
+            })
+        }else{
+            await profile.editAuction({...auction, ...this.state})
+        }
         // Clean State
         this.state = null;
         this.props.history.push(`/${new String(profile.getType()).toLowerCase()}/auctions`);
     }
 
+    setBid = (bid) => {
+        this.onChange({type : 'bid', value : bid});
+    }
+
     
-    onChange = ({type, value}) => {
-        var validator_fee = this.state.validator_fee;
-        if((type == 'payment_amount') && (value > 0)){
-                validator_fee = Numbers.toFloat(value*this.state.fee_percentage);
+    onChange = async ({type, value}) => {
+        let canEdit = checkParams(this.state.type, {...this.state, [type] : value});
+        var company = this.state.company, state = this.state.state;
+        if(type == 'state'){ state = value}
+        if(type == 'bid'){
+            company = value.company;
+            state = 'Finalize';
         }
-        this.setState({...this.state, [type] : value, validator_fee})
+        this.setState({...this.state, [type] : value, canEdit, company, state})
     }
 
 
@@ -128,7 +160,7 @@ class EditAuction extends React.Component{
                                         id="name"
                                         value={this.state.pba_name}
                                         type={'pba_name'}
-                                        disabled={!isEditable('pba_name')}
+                                        disabled={!isEditable(this.state.type, 'pba_name')}
                                         onChange={this.onChange}
                                         style={{width : '80%'}}
                                         label="PBA Name"
@@ -144,7 +176,7 @@ class EditAuction extends React.Component{
                                         type={'workpackage_name'}
                                         onChange={this.onChange}
                                         value={this.state.workpackage_name}
-                                        disabled={!isEditable('workpackage_name')}
+                                        disabled={!isEditable(this.state.type, 'workpackage_name')}
                                         style={{width : '80%'}}
                                         label="WorkPackage Name"
                                         placeholder="Workpackage name"
@@ -158,7 +190,7 @@ class EditAuction extends React.Component{
                                         id="state"
                                         type={'state'}
                                         value={new String(this.state.state).toLowerCase()}
-                                        disabled={!isEditable('state')}
+                                        disabled={!isEditable(this.state.type, 'state')}
                                         onChange={this.onChange}
                                         options={auctionStatusArray}
                                         style={{width : '80%'}}
@@ -182,7 +214,7 @@ class EditAuction extends React.Component{
                                         id="name"
                                         type={'auction_name'}
                                         value={this.state.auction_name}
-                                        disabled={!isEditable('auction_name')}
+                                        disabled={!isEditable(this.state.type, 'auction_name')}
                                         onChange={this.onChange}
                                         style={{width : '80%'}}
                                         label="Auction Name"
@@ -198,7 +230,7 @@ class EditAuction extends React.Component{
                                         id="payment_amount"
                                         type={'payment_amount'}
                                         value={this.state.payment_amount}
-                                        disabled={!isEditable('payment_amount')}
+                                        disabled={!isEditable(this.state.type, 'payment_amount')}
                                         onChange={this.onChange}
                                         InputProps={{
                                             inputComponent: NumberFormatCustom,
@@ -236,7 +268,7 @@ class EditAuction extends React.Component{
                                         helperText={'Choose the Company Name'}
                                         type={'company'}
                                         value={this.state.company.address}
-                                        disabled={!isEditable('company')}
+                                        disabled={!isEditable(this.state.type, 'company')}
                                         onChange={this.onChange}
                                         options={this.state.companies}
                                         style={{width : '80%'}}
@@ -258,7 +290,7 @@ class EditAuction extends React.Component{
                                         helperText={'Choose the Validator Name'}
                                         type={'validator'}
                                         value={this.state.validator.address}
-                                        disabled={!isEditable('validator')}
+                                        disabled={!isEditable(this.state.type, 'validator')}
                                         onChange={this.onChange}
                                         options={this.state.validators}
                                         style={{width : '80%'}}
@@ -280,7 +312,7 @@ class EditAuction extends React.Component{
                                         helperText={'Choose the Client Name'}
                                         type={"client"}
                                         value={this.state.client.address}
-                                        disabled={!isEditable('client')}
+                                        disabled={!isEditable(this.state.type, 'client')}
                                         onChange={this.onChange}
                                         options={this.state.clients}
                                         style={{width : '80%'}}
@@ -303,7 +335,7 @@ class EditAuction extends React.Component{
                                         id="calendar"
                                         type={"start_date"}
                                         value={this.state.start_date}
-                                        disabled={!isEditable('start_date')}
+                                        disabled={!isEditable(this.state.type, 'start_date')}
                                         onChange={this.onChange}
                                         options={this.state.clients}
                                         style={{width : '80%'}}
@@ -318,7 +350,7 @@ class EditAuction extends React.Component{
                                         id="calendar"
                                         type={"end_date"}
                                         value={this.state.end_date}
-                                        disabled={!isEditable('end_date')}
+                                        disabled={!isEditable(this.state.type, 'end_date')}
                                         onChange={this.onChange}
                                         options={this.state.clients}
                                         style={{width : '80%'}}
@@ -332,7 +364,7 @@ class EditAuction extends React.Component{
                                     <CalendarInputField
                                         id="calendar"
                                         type={"pay_date"}
-                                        disabled={!isEditable('pay_date')}
+                                        disabled={!isEditable(this.state.type, 'pay_date')}
                                         onChange={this.onChange}
                                         value={this.state.pay_date}
                                         options={this.state.clients}
@@ -342,14 +374,26 @@ class EditAuction extends React.Component{
                                 </div>
                             </Col>
                         </Row>
-                        <Row>
-                            <Col lg={12}>
-                                <Button 
-                                    onClick={() => this.edit()} variant="contained" color="primary" className={'button-enter'}>
-                                        Confirm Editing 
-                                </Button>       
-                            </Col>
-                        </Row>
+                        {
+                            ((this.state.type == 'client') && (_.isEmpty(this.state.company)) || ((this.state.type == 'client') && this.state.state != 'finalize')) ?
+                                <AuctionBidsTable setBid={this.setBid} {...this.props} auctions={this.state.bids}/>
+                            : null
+                        }
+
+                        {
+                            (this.state.state != 'finalize') ?
+                                <Row>
+                                    <Col lg={12}>
+                                        <Button 
+                                            disabled={!this.state.canEdit}
+                                            onClick={() => this.edit()} variant="contained" color="primary" className={'button-enter'}>
+                                                Confirm Editing 
+                                        </Button>       
+                                    </Col>
+                                </Row>
+                            : 
+                                null
+                        }
                     </CardBody>
                 </Card>
             </Container>

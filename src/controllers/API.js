@@ -36,9 +36,10 @@ class API{
     }
 
     getAuctionByAuctionAddress = (auction_address) => {
+        var address = auction_address;
         let array = this.getAllAuctions();
         for (var i=0; i < array.length; i++) {
-            if (array[i].auction_address == auction_address) {
+            if (new String(array[i].auction_address).toLowerCase().trim() == new String(address).toLowerCase().trim() ) {
                 return array[i];
             }
         }
@@ -61,8 +62,9 @@ class API{
         await Cache.setToCache(`all/Auctions`, all_array);
     }
 
-    editAuctionByAddress = async (auction, savableAddress) => {
+    editAuctionByAddress = async (auctionObject, savableAddress) => {
         // Add to Type Auction
+        var auction = auctionObject;
         var array = this.getAuctionsByAddress(savableAddress);
         if(!array){array = []}
         for (var i=0; i < array.length; i++) {
@@ -73,8 +75,9 @@ class API{
         await Cache.setToCache(`${new String(savableAddress).toLowerCase()}/Auctions`, array);
     }
 
-    editAuctionbyAll = async (auction) => {
+    editAuctionbyAll = async (auctionObject) => {
         // Add to Type Auction
+        var auction = auctionObject;
         var array = this.getAllAuctions();
         if(!array){array = []}
         for (var i=0; i < array.length; i++) {
@@ -95,9 +98,10 @@ class API{
         return auction;
     }
 
-    editBidByAuctionByAddress =  async (bid, auction_address) => {
+    editBidByAuctionByAddress =  async (bidObject, auction_address) => {
         // Add to Type Auction
-        var auction = this.getBidsByAuctionAddress(auction_address);
+        var bid = bidObject;
+        var auction = this.getAuctionByAuctionAddress(auction_address);
         let bids = auction.bids;
         if(!bids){bids = []}
         for (var i=0; i < bids.length; i++) {
