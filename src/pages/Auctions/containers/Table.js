@@ -74,6 +74,7 @@ const fromDatabasetoTable = (data) => {
             client: item.client.name,
             bids : item.bids,
             validator  : item.validator.name,
+            workpackage_name : item.workpackage_name,
             amount :  Numbers.formatNumber(item.payment_amount),
             paid :  Numbers.formatNumber(item.total_paid),
             state: item.state || 'none'
@@ -115,6 +116,11 @@ const rows = [
     {
         id: 'state',
         label: 'State',
+        numeric: false
+    },
+    {
+        id: 'workpackage_name',
+        label: 'Work Package',
         numeric: false
     },
     {
@@ -407,6 +413,7 @@ class AuctionsTable extends React.Component {
                                     <TableCell style={{width : 50}} align="center">
                                         <p className={auctionStatus[n.state.toLowerCase()]}>
                                         {titleCase(n.state)}</p></TableCell>
+                                    <TableCell align="left">{n.workpackage_name}</TableCell>
                                     <TableCell align="left">{n.company}</TableCell>
                                     <TableCell align="left">{n.client}</TableCell>
                                     <TableCell align="left">{n.validator}</TableCell>
