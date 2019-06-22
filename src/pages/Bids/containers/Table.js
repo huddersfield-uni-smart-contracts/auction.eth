@@ -69,7 +69,7 @@ const fromDatabasetoTable = (data) => {
         return {
             id :  index,
             name : item.pba_name,
-            auction_adress : item.auction_address,
+            auction_address : item.auction_address,
 			company : item.company.name,
             client: item.client.name,
             validator  : item.validator.name,
@@ -91,8 +91,8 @@ const rows = [
         numeric: false
     },
     {
-        id: 'auction_adress',
-        label: 'Auction Adress',
+        id: 'auction_address',
+        label: 'Auction Address',
         numeric: false
     },
 
@@ -368,7 +368,7 @@ class BidsTable extends React.Component {
                                 >
                                     <TableCell align="left">{n.id}</TableCell>
                                     <TableCell align="left">{n.name}</TableCell>
-                                    <TableCell align="left">{StringWorkerSingleton.toAddressConcat(n.auction_adress)}</TableCell>
+                                    <TableCell align="left">{StringWorkerSingleton.toAddressConcat(n.auction_address)}</TableCell>
                                   
                                     <TableCell align="left">${n.amount}</TableCell>
                                     <TableCell style={{width : 50}} align="center">

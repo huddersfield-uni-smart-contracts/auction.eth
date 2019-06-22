@@ -106,7 +106,7 @@ class EditAuction extends React.Component{
 
     edit = async () => {
         const { profile } = this.props;
-        let auction = APISingleton.getAuctionByAuctionAddress(this.state.auction_adress);
+        let auction = APISingleton.getAuctionByAuctionAddress(this.state.auction_address);
         if(this.state.type == 'client'){
             await profile.closeAuction({
                 auction : { ...auction, ...this.state},

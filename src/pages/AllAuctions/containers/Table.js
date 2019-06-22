@@ -69,7 +69,7 @@ const fromDatabasetoTable = (data) => {
         return {
             id :  index,
             name : item.pba_name,
-            auction_adress : item.auction_address,
+            auction_address : item.auction_address,
 			company : item.company ? item.company.name : 'N/A',
             client: item.client.name,
             bids : item.bids,
@@ -99,8 +99,8 @@ const rows = [
         numeric: true
     },
     {
-        id: 'auction_adress',
-        label: 'Auction Adress',
+        id: 'auction_address',
+        label: 'Auction Address',
         numeric: false
     },
     {
@@ -338,7 +338,7 @@ class AllAuctionsTable extends React.Component {
 
     handleClick = (event, object) => {
         let id = object.id;
-        let auction = APISingleton.getAuctionByAuctionAddress(object.auction_adress);
+        let auction = APISingleton.getAuctionByAuctionAddress(object.auction_address);
         this.goToEdit(auction);
         const { selected } = this.state;
         const selectedIndex = selected.indexOf(id);
@@ -407,7 +407,7 @@ class AllAuctionsTable extends React.Component {
                                     <TableCell align="left">{n.id}</TableCell>
                                     <TableCell align="left">{n.name}</TableCell>
                                     <TableCell align="center">{n.bids.length}</TableCell>
-                                    <TableCell align="left">{StringWorkerSingleton.toAddressConcat(n.auction_adress)}</TableCell>
+                                    <TableCell align="left">{StringWorkerSingleton.toAddressConcat(n.auction_address)}</TableCell>
                                   
                                     <TableCell align="left">{n.paid} €</TableCell>
                                     <TableCell align="left">{n.amount} €</TableCell>

@@ -26,7 +26,6 @@ const defaultProps = {
     fee_percentage : 0.01,
     state : 'Waiting for approval',
     total_paid : 0,
-    auction_address : genAddress(),
     bids : [],
     client : {}
 }
@@ -65,7 +64,9 @@ class CreateAuction extends React.Component{
 
     constructor(props){
         super(props)
-        this.state = {...defaultProps}
+        this.state = {...defaultProps,
+            auction_address : genAddress()
+        }
     }
 
     componentDidMount(){
