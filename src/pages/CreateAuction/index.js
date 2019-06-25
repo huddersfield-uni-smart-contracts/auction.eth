@@ -170,7 +170,7 @@ class CreateAuction extends React.Component{
                                             inputComponent: NumberFormatCustom,
                                           }}
                                         style={{width : '80%'}}
-                                        label="Payment Amount"
+                                        label="Max Price"
                                     /> 
                                 </div>
                             </Col>

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import { compose } from 'lodash/fp'
 import { InputField, DropDownField, CalendarInputField } from '../../components/Input';
-import { UserNetworkIcon, CompanyIcon, CropPortraitIcon, BookLockIcon, UserStarIcon, SignTextIcon, CalendarIcon, MoneyIcon } from 'mdi-react';
+import { UserNetworkIcon, CompanyIcon, CropPortraitIcon, BookLockIcon, UserStarIcon, SignTextIcon, CalendarIcon, MoneyIcon, FileIcon } from 'mdi-react';
 import APISingleton from '../../controllers/API';
 import NumberFormat from 'react-number-format';
 import { Button, MenuItem } from '@material-ui/core';
@@ -154,18 +154,15 @@ class CreateBid extends React.Component{
                                 </Col>
                                 <Col lg={4}>
                                     <div style={{marginTop : 20}}>
-                                        <MoneyIcon className='icon-left'/>
+                                        <FileIcon className='icon-left'/>
                                         <InputField
-                                            id="payment_amount"
-                                            type={'payment_amount'}
-                                            value={this.state.payment_amount}
-                                            disabled={!isEditable('payment_amount')}
+                                            id="workpackage_name"
+                                            type={'workpackage_name'}
+                                            value={this.state.workpackage_name}
+                                            disabled={!isEditable('workpackage_name')}
                                             onChange={this.onChange}
-                                            InputProps={{
-                                                inputComponent: NumberFormatCustom,
-                                            }}
                                             style={{width : '80%'}}
-                                            label="Payment Amount"
+                                            label="WorkPackage Name"
                                         /> 
                                     </div>
                                 </Col>

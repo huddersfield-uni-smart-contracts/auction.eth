@@ -45,18 +45,16 @@ class ProfilePickerPage extends React.Component{
                 </Row>
                 <Row>
                     <p className='text-initial_page'>
-                        Welcome to the autonomous PBA smart-auction! Here you’ll be able to create payments that respect certain conditions, in order to make payments between auctionor – auctioned faster, simpler and more transparent.
-                    <p>  
-                        To start using the autonomous PBA, please make sure all agents have a valid Ethereum address. </p>
-                    <p>
-                        Start by defining addresses for Validators and Companies, by clicking on each icon respectively.
-                        Afterwards, you can click on the Client agent to define the initial conditions for the payments smart-
-                        auction.
-                    </p>
-                    <p>
-                        Remember: amendments can be made to some variables such as date, time or names, but not to
-                        amounts.
-                    </p>
+                            Welcome to the Auction smart-contract! Here you’ll be able to create different types of decentralised auctions and to accept bids from pre-selected participants. With the Auction smart-contract bidding and tendering processes will be more efficient, transparent and auditable by any of the involved parties.
+                        <p>  
+                            Start by choosing a login for the Client, Validator and Company, by clicking on each icon respectively. Afterwards, you can click on the Client agent to define the initial conditions for the payments smart- auction.    
+                        </p>
+                        <p>
+                            To use the Auction smart-contract, please make sure all agents have a valid Ethereum address.
+                        </p>
+                        <p>
+                            Remember: amendments can be made to some variables such as date, time or names, but not to amounts.
+                        </p>
                     </p>
                 </Row>
                 <Row style={{marginTop : 50}} >
